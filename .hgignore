@@ -1,0 +1,21 @@
+syntax: glob
+*.sublime-*
+ise_proj/.Xil/
+ise_proj/*.*log
+ise_proj/_xmsgs
+ise_proj/*.lso
+ise_proj/*.cfi
+ise_proj/*.mcs
+ise_proj/*.prm
+ise_proj/*.xdl
+ise_proj/*.xwbt
+ise_proj/*.ncd
+ise_proj/*.html
+ise_proj/*.cmd
+ise_proj/iseconfig/
+ise_proj/pa.fromNcd.tcl
+ise_proj/*.debug
+ise_proj/planAhead_run*
+ise_proj/*.gise
+ise_proj/*.xise
+ise_proj/xst/

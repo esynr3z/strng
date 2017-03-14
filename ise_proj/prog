@@ -1,0 +1,141 @@
+#!/bin/bash
+
+# Script to programm FPGA or external ROM with Xilinx ISE .bit file created
+# Just type: "bash prog -h" to see how to use it
+
+PROJ_PATH=`pwd`
+#PROJ_NAME=`basename "$PROJ_PATH"`
+#TOP_NAME=$PROJ_NAME
+TOP_NAME="fpga_core"
+FPGA_PROG_FILE="fpga_prog.cmd"
+ROM_PROG_FILE="rom_prog.cmd"
+ROM_ERASE_FILE="rom_erase.cmd"
+FPGA_PROG="DISABLE"
+ROM_PROG="DISABLE"
+ROM_ERASE="DISABLE"
+
+# Parse options
+while getopts ":efrh" Option
+do
+  case $Option in
+    f) FPGA_PROG="ENABLE";;
+    r) ROM_PROG="ENABLE";;
+    e) ROM_ERASE="ENABLE";;
+    h | *)  echo "HOW TO USE:"
+            echo "For FPGA programming just type:"
+            echo "  bash prog -f"
+            echo "For external ROM programming just type:"
+            echo "  bash prog -r"
+            echo "For external ROM erasing just type:"
+            echo "  bash prog -e"
+            exit 0
+            ;;
+  esac
+done
+if [ $OPTIND -eq 1 ]
+then
+    echo "Type \"bash prog -h\" to see how to use this script."
+    exit 0
+fi
+shift $(($OPTIND - 1))
+
+# Check if FPGA programm command file exists, if yes - removes and creates again, if no - only create 
+rm -f $FPGA_PROG_FILE
+cat > $FPGA_PROG_FILE << EOF
+setMode -bs
+setCable -port auto
+Identify -inferir
+identifyMPM
+assignFile -p 1 -file "${PROJ_PATH}/${TOP_NAME}.bit"
+Program -p 1
+quit
+EOF
+
+# Check if ROM programm command file exists, if yes - removes and creates again, if no - only create 
+rm -f $ROM_PROG_FILE
+cat > $ROM_PROG_FILE << EOF
+setMode -bs
+setCable -port auto
+Identify -inferir
+identifyMPM
+setMode -pff
+addConfigDevice  -name "${TOP_NAME}" -path "${PROJ_PATH}"
+setSubmode -pffspi
+setAttribute -configdevice -attr multibootBpiType -value ""
+addDesign -version 0 -name "0"
+setMode -pff
+addDeviceChain -index 0
+setAttribute -configdevice -attr compressed -value "FALSE"
+setAttribute -configdevice -attr autoSize -value "FALSE"
+setAttribute -configdevice -attr fileFormat -value "mcs"
+setAttribute -configdevice -attr fillValue -value "FF"
+setAttribute -configdevice -attr swapBit -value "FALSE"
+setAttribute -configdevice -attr dir -value "UP"
+setAttribute -configdevice -attr multiboot -value "FALSE"
+setAttribute -configdevice -attr spiSelected -value "TRUE"
+addPromDevice -p 1 -size 8192 -name 8M
+setMode -pff
+addDeviceChain -index 0
+setSubmode -pffspi
+setMode -pff
+setAttribute -design -attr name -value "0000"
+addDevice -p 1 -file "${PROJ_PATH}/${TOP_NAME}.bit"
+setMode -pff
+setSubmode -pffspi
+generate
+setMode -bs
+attachflash -position 1 -spi "W25Q64BV"
+assignfiletoattachedflash -position 1 -file "${PROJ_PATH}/${TOP_NAME}.mcs"
+Program -p 1 -dataWidth 1 -spionly -e -v -loadfpga
+quit
+EOF
+
+# Check if ROM erase command file exists, if yes - removes and creates again, if no - only create 
+rm -f $ROM_ERASE_FILE
+cat > $ROM_ERASE_FILE << EOF
+setMode -bs
+setCable -port auto
+Identify -inferir
+identifyMPM
+setMode -pff
+addConfigDevice  -name "${TOP_NAME}" -path "${PROJ_PATH}"
+setSubmode -pffspi
+setAttribute -configdevice -attr multibootBpiType -value ""
+addDesign -version 0 -name "0"
+setMode -pff
+addDeviceChain -index 0
+setAttribute -configdevice -attr compressed -value "FALSE"
+setAttribute -configdevice -attr autoSize -value "FALSE"
+setAttribute -configdevice -attr fileFormat -value "mcs"
+setAttribute -configdevice -attr fillValue -value "FF"
+setAttribute -configdevice -attr swapBit -value "FALSE"
+setAttribute -configdevice -attr dir -value "UP"
+setAttribute -configdevice -attr multiboot -value "FALSE"
+setAttribute -configdevice -attr spiSelected -value "TRUE"
+addPromDevice -p 1 -size 8192 -name 8M
+setMode -pff
+addDeviceChain -index 0
+setSubmode -pffspi
+setMode -pff
+setAttribute -design -attr name -value "0000"
+addDevice -p 1 -file "${PROJ_PATH}/${TOP_NAME}.bit"
+setMode -pff
+setSubmode -pffspi
+generate
+setMode -bs
+attachflash -position 1 -spi "W25Q64BV"
+assignfiletoattachedflash -position 1 -file "${PROJ_PATH}/${TOP_NAME}.mcs"
+Erase -p 1 -spionly
+quit
+EOF
+
+if [ ${FPGA_PROG} == "ENABLE" ]
+then
+    impact -batch $FPGA_PROG_FILE 
+elif [ ${ROM_PROG} == "ENABLE" ] 
+then
+    impact -batch $ROM_PROG_FILE  
+elif [ ${ROM_ERASE} == "ENABLE" ] 
+then
+    impact -batch $ROM_ERASE_FILE  
+fi

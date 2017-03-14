@@ -1,0 +1,115 @@
+#CLOCK & RESET
+#NET "clk24m" LOC = "P56" ;
+NET "clk50m" LOC = "P55" ;
+NET "rst_n"  LOC = "P124";#KEY1
+
+NET "clk50m" TNM_NET = "clk50m";
+TIMESPEC TS_clk50m = PERIOD "clk50m" 18 ns HIGH 50 % INPUT_JITTER 200 ps;
+
+#IO_A
+NET "io_a1"   LOC = "P123";
+NET "io_a2"   LOC = "P121";
+NET "io_a3"   LOC = "P120";
+NET "io_a4"   LOC = "P119";
+NET "io_a5"   LOC = "P118";
+NET "io_a6"   LOC = "P117";
+NET "io_a7"   LOC = "P116";
+NET "io_a8"   LOC = "P115";
+#NET "io_a9"   LOC = "P114";
+#NET "io_a10"  LOC = "P112";
+#NET "io_a11"  LOC = "P111";
+#NET "io_a12"  LOC = "P105";
+#NET "io_a13"  LOC = "P104";
+#NET "io_a14"  LOC = "P102";
+#NET "io_a15"  LOC = "P101";
+#NET "io_a16"  LOC = "P100";
+#NET "io_a17"  LOC = "P99" ;
+#NET "io_a18"  LOC = "P98" ;
+#NET "io_a19"  LOC = "P97" ;
+#NET "io_a20"  LOC = "P95" ;
+#NET "io_a21"  LOC = "P94" ;
+#NET "io_a22"  LOC = "P93" ;
+#NET "io_a23"  LOC = "P92" ;
+#NET "io_a24"  LOC = "P88" ;
+#NET "io_a25"  LOC = "P87" ;
+#NET "io_a26"  LOC = "P85" ;
+#NET "io_a27"  LOC = "P84" ;
+#NET "io_a28"  LOC = "P83" ;
+#NET "io_a29"  LOC = "P82" ;
+#NET "io_a30"  LOC = "P81" ;
+#NET "io_a31"  LOC = "P80" ;
+#NET "io_a32"  LOC = "P79" ;
+#NET "io_a33"  LOC = "P78" ;
+#NET "io_a34"  LOC = "P75" ;
+#NET "io_a35"  LOC = "P74" ;
+#NET "io_a36"  LOC = "P67" ;
+#NET "io_a37"  LOC = "P66" ;
+#NET "io_a38"  LOC = "P59" ;
+
+#IO_B
+#NET "io_b2"   LOC = "P126";#LCD_RS, KEY0
+#NET "io_b3"   LOC = "P127";#LCD_RW, LED0
+#NET "io_b4"   LOC = "P131";#LCD_E , LED1
+#NET "io_b5"   LOC = "P132";#LCD_D0, SEG0
+#NET "io_b6"   LOC = "P133";#LCD_D1, SEG1
+#NET "io_b7"   LOC = "P134";#LCD_D2, SEG2
+#NET "io_b8"   LOC = "P137";#LCD_D3, SEG3
+#NET "io_b9"   LOC = "P138";#LCD_D4, SEG4
+#NET "io_b10"  LOC = "P139";#LCD_D5, SEG5
+#NET "io_b11"  LOC = "P140";#LCD_D6, SEG6
+NET "io_b12"  LOC = "P141";#LCD_D7, SEG7
+
+#SDRAM
+#NET "sdram_clk"      LOC = "P143";
+#NET "sdram_cke"      LOC = "P144";
+#NET "sdram_cs_n"     LOC = "P48" ;
+#NET "sdram_ras_n"    LOC = "P50" ;
+#NET "sdram_cas_n"    LOC = "P51" ;
+#NET "sdram_we_n"     LOC = "P35" ;
+#NET "sdram_dqm[1]"   LOC = "P142";
+#NET "sdram_dqm[0]"   LOC = "P34" ;
+#NET "sdram_ba[1]"    LOC = "P46" ;
+#NET "sdram_ba[0]"    LOC = "P47" ;
+#NET "sdram_addr[12]" LOC = "P1"  ;
+#NET "sdram_addr[11]" LOC = "P2"  ;
+#NET "sdram_addr[10]" LOC = "P45" ;
+#NET "sdram_addr[9]"  LOC = "P5"  ;
+#NET "sdram_addr[8]"  LOC = "P6"  ;
+#NET "sdram_addr[7]"  LOC = "P7"  ;
+#NET "sdram_addr[6]"  LOC = "P8"  ;
+#NET "sdram_addr[5]"  LOC = "P9"  ;
+#NET "sdram_addr[4]"  LOC = "P10" ;
+#NET "sdram_addr[3]"  LOC = "P40" ;
+#NET "sdram_addr[2]"  LOC = "P41" ;
+#NET "sdram_addr[1]"  LOC = "P43" ;
+#NET "sdram_addr[0]"  LOC = "P44" ;
+#NET "sdram_dq[15]"   LOC = "P22" ;
+#NET "sdram_dq[14]"   LOC = "P21" ;
+#NET "sdram_dq[13]"   LOC = "P17" ;
+#NET "sdram_dq[12]"   LOC = "P16" ;
+#NET "sdram_dq[11]"   LOC = "P15" ;
+#NET "sdram_dq[10]"   LOC = "P14" ;
+#NET "sdram_dq[9]"    LOC = "P12" ;
+#NET "sdram_dq[8]"    LOC = "P11" ;
+#NET "sdram_dq[7]"    LOC = "P33" ;
+#NET "sdram_dq[6]"    LOC = "P32" ;
+#NET "sdram_dq[5]"    LOC = "P30" ;
+#NET "sdram_dq[4]"    LOC = "P29" ;
+#NET "sdram_dq[3]"    LOC = "P27" ;
+#NET "sdram_dq[2]"    LOC = "P26" ;
+#NET "sdram_dq[1]"    LOC = "P24" ;
+#NET "sdram_dq[0]"    LOC = "P23" ;
+
+#NET "sdram_dq[*]"   TNM = SDRAM_PIN_GROUP;
+#NET "sdram_addr[*]" TNM = SDRAM_PIN_GROUP;
+#NET "sdram_ba[*]"   TNM = SDRAM_PIN_GROUP;
+#NET "sdram_dqm[*]"  TNM = SDRAM_PIN_GROUP;
+#NET "sdram_we_n"    TNM = SDRAM_PIN_GROUP;
+#NET "sdram_cas_n"   TNM = SDRAM_PIN_GROUP;
+#NET "sdram_ras_n"   TNM = SDRAM_PIN_GROUP;
+#NET "sdram_cs_n"    TNM = SDRAM_PIN_GROUP;
+#NET "sdram_cke"     TNM = SDRAM_PIN_GROUP;
+#NET "sdram_clk"     TNM = SDRAM_PIN_GROUP;
+
+#NET "sdram_dq[*]" OFFSET = IN 4ns VALID 3ns BEFORE "clk50m";
+#TIMEGRP SDRAM_PIN_GROUP OFFSET = OUT AFTER "clk50m" REFERENCE_PIN "sdram_clk" RISING;
