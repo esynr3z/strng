@@ -172,6 +172,8 @@ wire clk100k;
 // LED 7-segment tester    
 wire [7:0] seg_data;
 
+genvar i;
+
 
 //------------------------------------------------------------------------------
 //
@@ -217,7 +219,107 @@ assign io_a9 = rst_n_buf;
 
 //------------------------------------------------------------------------------
 //
-// Internal peripheral
+// STR
+//
+//------------------------------------------------------------------------------
+// The number of stages that compose the STR. Each
+// stage can be initialized either to 0 or 1.
+parameter LEN = 8;
+// A stage contains a token if its output
+// Cn is not equal to the output Cn+1. Conversely, a stage
+// contains a bubble if its output Cn is equal to the output
+// Cn+1. For example, 01010000 - TTTTBBBB
+parameter INIT = 8'b01010000;
+
+wire [7:0] s_a;
+wire [7:0] s_b;
+
+str
+    #(
+        .LEN(LEN),
+        .INIT(INIT)
+    )
+    str_a
+    (
+        .rst_n (rst_n_buf),
+        .s (s_a)
+    );
+
+str
+    #(
+        .LEN(LEN),
+        .INIT(INIT)
+    )
+    str_b
+    (
+        .rst_n (rst_n_buf),
+        .s (s_b)
+    );
+
+reg  [LEN-1:0] s_sample0;
+reg  [LEN-1:0] s_sample1;
+reg  [LEN-1:0] s_sample2;
+reg  [LEN-1:0] s_sample3;
+wire [LEN-1:0] s_sample_xor;
+wire [LEN-1:0] trnd_byte;
+
+generate
+    for (i=0; i<LEN; i=i+1) 
+    begin : s_sample_gen
+        // Sample 0 stage
+        always @ (posedge s_b[i] or negedge rst_n_buf)
+        begin
+            if (~rst_n_buf)
+                s_sample0[i] <= 0;
+            else
+                s_sample0[i] <= s_a[i];
+        end
+
+        assign s_sample_xor[i] = s_sample0[i] ^ s_sample1[i];
+
+        // Sample 1 stage
+        always @ (posedge s_b[i] or negedge rst_n_buf)
+        begin
+            if (~rst_n_buf)
+                s_sample1[i] <= 0;
+            else
+                s_sample1[i] <= s_sample_xor[i];
+        end
+
+        // Sample 2 stage
+        always @ (posedge s_sample0[i] or negedge rst_n_buf)
+        begin
+            if (~rst_n_buf)
+                s_sample2[i] <= 0;
+            else
+                s_sample2[i] <= s_sample1[i];
+        end
+
+        // Sample 3 stage
+        always @ (posedge clk or negedge rst_n_buf)
+        begin
+            if (~rst_n_buf)
+                s_sample3[i] <= 0;
+            else
+                s_sample3[i] <= s_sample2[i];
+        end
+    end
+endgenerate
+
+assign trnd_byte = s_sample3;
+
+assign io_a8 = trnd_byte[7];
+assign io_a7 = trnd_byte[6];
+assign io_a6 = trnd_byte[5];
+assign io_a5 = trnd_byte[4];
+assign io_a4 = trnd_byte[3];
+assign io_a3 = trnd_byte[2];
+assign io_a2 = trnd_byte[1];
+assign io_a1 = trnd_byte[0];
+
+//------------------------------------------------------------------------------
+//
+// Led
 //
 //------------------------------------------------------------------------------
 // LED 7-segment tester
@@ -228,27 +330,6 @@ segment_show
         .rst_n  (rst_n_buf),    // i: Active low reset
         .SEG    (seg_data)      // o: Segment data 8-width bus
     );
-
-
-
-wire [7:0] s;
-str
-    str_a
-    (
-        .rst_n (rst_n_buf),
-        .s (s)
-    );
-
 assign io_b12 = seg_data[7];
-
-assign io_a8 = s[7];
-assign io_a7 = s[6];
-assign io_a6 = s[5];
-assign io_a5 = s[4];
-assign io_a4 = s[3];
-assign io_a3 = s[2];
-assign io_a2 = s[1];
-assign io_a1 = s[0];
-
 
 endmodule //fpga_core
