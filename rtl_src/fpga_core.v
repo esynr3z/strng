@@ -19,8 +19,8 @@ module fpga_core (
     io_a6,
     io_a7,
     io_a8,
-//    io_a9,
-//    io_a10,
+    io_a9,
+    io_a10,
 //    io_a11,
 //    io_a12,
 //    io_a13,
@@ -100,8 +100,8 @@ output  io_a5;       // IO port A pin (board: A5)
 output  io_a6;       // IO port A pin (board: A6)
 output  io_a7;       // IO port A pin (board: A7)
 output  io_a8;       // IO port A pin (board: A8)
-//input  io_a9;       // IO port A pin (board: A9)
-//input  io_a10;      // IO port A pin (board: A10)
+output  io_a9;       // IO port A pin (board: A9)
+output  io_a10;      // IO port A pin (board: A10)
 //input  io_a11;      // IO port A pin (board: A11)
 //input  io_a12;      // IO port A pin (board: A12)
 //input  io_a13;      // IO port A pin (board: A13)
@@ -166,6 +166,8 @@ reg       rst_n_buf;
 
 // Clock
 wire clk;
+reg [8:0] clk_counter;
+wire clk100k;
 
 // LED 7-segment tester    
 wire [7:0] seg_data;
@@ -178,6 +180,17 @@ wire [7:0] seg_data;
 //------------------------------------------------------------------------------
 assign clk = clk50m;
 
+always @ (posedge clk)
+begin
+    if (clk_counter == 499)
+        clk_counter <= 0;
+    else
+        clk_counter <= clk_counter+1;
+end  
+
+assign clk100k = (clk_counter == 499) ? 1'b1 : 1'b0;
+
+assign io_a10 = clk;
 
 //------------------------------------------------------------------------------
 //
@@ -185,14 +198,14 @@ assign clk = clk50m;
 //
 //------------------------------------------------------------------------------
 // Reset registering stage
-always @ (posedge clk)
+always @ (posedge clk100k)
 begin
     rst_n_r <= {rst_n_r[6:0],rst_n};
 end   
 
 // Reset pulse generator 
 // Minimal reset active pulse lengh = 8*T_clk
-always @ (posedge clk)
+always @ (posedge clk100k)
 begin
     if(rst_n_r==8'hFF)
         rst_n_buf <= 1'b1;
@@ -200,6 +213,7 @@ begin
         rst_n_buf <= 1'b0;
 end
 
+assign io_a9 = rst_n_buf;
 
 //------------------------------------------------------------------------------
 //
