@@ -13,7 +13,7 @@ module segment_show(
 	begin
 		if(!rst_n)
 			cnt <= 25'd0;
-		else if(cnt != 25'd24999999)
+		else if(cnt != 25'd2499999)
 			cnt <= cnt + 1'b1;
 		else
 			cnt <= 25'd0;
@@ -24,7 +24,7 @@ module segment_show(
 	begin
 		if(!rst_n)
 			add_en <= 1'b0;
-		else if(cnt == 25'd24999999)
+		else if(cnt == 25'd2499999)
 			add_en <= 1'b1;
 		else
 			add_en <= 1'b0;
