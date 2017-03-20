@@ -41,7 +41,6 @@ generate
                 .f  (f[i]),
                 .r  (r[i]),
                 .clr((~rst_n) & (~INIT[i])),
-                //.clr(rst_n | INIT[0]),
                 .set((~rst_n) &  INIT[i]),
                 .c  (c[i])
             );
@@ -68,109 +67,5 @@ generate
         end      
     end
 endgenerate
-/*
-cmuller 
-    stage0 
-    (
-        .f  (f[0]),
-        .r  (r[0]),
-        .clr((~rst_n) & (~INIT[0])),
-        //.clr(rst_n | INIT[0]),
-        .set((~rst_n) &  INIT[0]),
-        .c  (c[0])
-    );
-assign f[0] = c[7];
-assign r[0] = c[1];
 
-cmuller 
-    stage1 
-    (
-        .f  (f[1]),
-        .r  (r[1]),
-        .clr((~rst_n) & (~INIT[1])),
-        //.clr(rst_n | INIT[1]),
-        .set((~rst_n) &  INIT[1]),
-        .c  (c[1])
-    );
-assign f[1] = c[0];
-assign r[1] = c[2];
-
-cmuller 
-    stage2 
-    (
-        .f  (f[2]),
-        .r  (r[2]),
-        .clr((~rst_n) & (~INIT[2])),
-        //.clr(rst_n | INIT[2]),
-        .set((~rst_n) &  INIT[2]),
-        .c  (c[2])
-    );
-assign f[2] = c[1];
-assign r[2] = c[3];
-
-cmuller 
-    stage3 
-    (
-        .f  (f[3]),
-        .r  (r[3]),
-        .clr((~rst_n) & (~INIT[3])),
-        //.clr(rst_n | INIT[3]),
-        .set((~rst_n) & INIT[3]),
-        .c  (c[3])
-    );
-assign f[3] = c[2];
-assign r[3] = c[4];
-
-cmuller 
-    stage4 
-    (
-        .f  (f[4]),
-        .r  (r[4]),
-        .clr((~rst_n) & (~INIT[4])),
-        //.clr(rst_n | INIT[4]),
-        .set((~rst_n) & INIT[4]),
-        .c  (c[4])
-    );
-assign f[4] = c[3];
-assign r[4] = c[5];
-
-cmuller 
-    stage5 
-    (
-        .f      (f[5]),
-        .r    (r[5]),
-        .clr  ((~rst_n) & (~INIT[5])),
-        //.clr(rst_n | INIT[5]),
-        .set    ((~rst_n) & INIT[5]),
-        .c      (c[5])
-    );
-assign f[5] = c[4];
-assign r[5] = c[6];
-
-cmuller 
-    stage6 
-    (
-        .f      (f[6]),
-        .r    (r[6]),
-        .clr  ((~rst_n) & (~INIT[6])),
-        //.clr(rst_n | INIT[6]),
-        .set    ((~rst_n) & INIT[6]),
-        .c      (c[6])
-    );
-assign f[6] = c[5];
-assign r[6] = c[7];
-
-cmuller 
-    stage7 
-    (
-        .f      (f[7]),
-        .r    (r[7]),
-        .clr  ((~rst_n) & (~INIT[7])),
-        //.clr(rst_n | INIT[7]),
-        .set    ((~rst_n) & INIT[7]),
-        .c      (c[7])
-    );
-assign f[7] = c[6];
-assign r[7] = c[0];
-*/
 endmodule // str

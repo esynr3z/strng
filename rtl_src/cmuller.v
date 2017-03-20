@@ -52,8 +52,6 @@ LUT5 //LUT5 from Xilinx Spartan6 family
     #(
         //O = ((!I0 * I2 * !I3) + (!I0 * I1 * I2) + I4 + (!I0 * I1 * !I3));
         .INIT(32'hFFFF4054)
-        //O = ((I0 * I2 * !I3) + (I0 * I1 * I2) + I4 + (I0 * I1 * !I3));
-        //.INIT(32'hFFFF80A8)
     )
     LUT5_u (
         .O  (c),    // LUT general output
