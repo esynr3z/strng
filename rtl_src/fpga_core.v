@@ -59,7 +59,7 @@ module fpga_core (
 //    io_b9,
 //    io_b10,
 //    io_b11,
-    io_b12
+//    io_b12
 //    sdram_clk,
 //    sdram_cke,
 //    sdram_cs_n,
@@ -142,7 +142,7 @@ output  io_a10;      // IO port A pin (board: A10)
 //output io_b9;       // IO port B pin (board: B9,  LCD_D4, SEG4)
 //output io_b10;      // IO port B pin (board: B10, LCD_D5, SEG5)
 //output io_b11;      // IO port B pin (board: B11, LCD_D6, SEG6)
-output io_b12;      // IO port B pin (board: B12, LCD_D7, SEG7)
+//output io_b12;      // IO port B pin (board: B12, LCD_D7, SEG7)
 
 // SDRAM
 //output                        sdram_clk;    // SDRAM clock (board: CLK port of SDRAM)
@@ -166,11 +166,9 @@ reg       rst_n_buf;
 
 // Clock
 wire clk;
-reg [8:0] clk_counter;
+reg [8:0] clk100k_counter;
+wire clk100k_en;
 wire clk100k;
-
-// LED 7-segment tester    
-wire [7:0] seg_data;
 
 genvar i;
 
@@ -184,13 +182,21 @@ assign clk = clk50m;
 
 always @ (posedge clk)
 begin
-    if (clk_counter == 499)
-        clk_counter <= 0;
+    if (clk100k_counter == 499)
+        clk100k_counter <= 0;
     else
-        clk_counter <= clk_counter+1;
+        clk100k_counter <= clk100k_counter+1;
 end  
 
-assign clk100k = (clk_counter == 499) ? 1'b1 : 1'b0;
+assign clk100k_en = (clk100k_counter == 499) ? 1'b1 : 1'b0;
+
+clk_buf
+    clk100k_buf
+    (
+        .in     (clk),
+        .ce     (clk100k_en),
+        .out    (clk100k)
+    );
 
 assign io_a10 = clk;
 
@@ -206,7 +212,7 @@ begin
 end   
 
 // Reset pulse generator 
-// Minimal reset active pulse lengh = 8*T_clk
+// Minimal reset active pulse lengh = 8*T_clk100k
 always @ (posedge clk100k)
 begin
     if(rst_n_r==8'hFF)
@@ -316,20 +322,5 @@ assign io_a4 = trnd_byte[3];
 assign io_a3 = trnd_byte[2];
 assign io_a2 = trnd_byte[1];
 assign io_a1 = trnd_byte[0];
-
-//------------------------------------------------------------------------------
-//
-// Led
-//
-//------------------------------------------------------------------------------
-// LED 7-segment tester
-segment_show
-    segment_show_u
-    (
-        .clk    (clk),          // i: Clock
-        .rst_n  (rst_n_buf),    // i: Active low reset
-        .SEG    (seg_data)      // o: Segment data 8-width bus
-    );
-assign io_b12 = seg_data[7];
 
 endmodule //fpga_core

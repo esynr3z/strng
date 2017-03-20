@@ -2,9 +2,11 @@
 #NET "clk24m" LOC = "P56" ;
 NET "clk50m" LOC = "P55" ;
 NET "rst_n"  LOC = "P124";#KEY1
-
 NET "clk50m" TNM_NET = "clk50m";
 TIMESPEC TS_clk50m = PERIOD "clk50m" 18 ns HIGH 50 % INPUT_JITTER 200 ps;
+NET "clk100k" TNM_NET = clk100k;
+TIMESPEC TS_clk100k = PERIOD "clk100k" TS_clk50m * 500 HIGH 50%;
+NET "clk50m" CLOCK_DEDICATED_ROUTE = FALSE;
 
 #IO_A
 NET "io_a1"   LOC = "P123";
@@ -45,7 +47,6 @@ NET "io_a10"  LOC = "P112";
 #NET "io_a36"  LOC = "P67" ;
 #NET "io_a37"  LOC = "P66" ;
 #NET "io_a38"  LOC = "P59" ;
-
 #IO_B
 #NET "io_b2"   LOC = "P126";#LCD_RS, KEY0
 #NET "io_b3"   LOC = "P127";#LCD_RW, LED0
@@ -57,8 +58,7 @@ NET "io_a10"  LOC = "P112";
 #NET "io_b9"   LOC = "P138";#LCD_D4, SEG4
 #NET "io_b10"  LOC = "P139";#LCD_D5, SEG5
 #NET "io_b11"  LOC = "P140";#LCD_D6, SEG6
-NET "io_b12"  LOC = "P141";#LCD_D7, SEG7
-
+#NET "io_b12"  LOC = "P141";#LCD_D7, SEG7
 #SDRAM
 #NET "sdram_clk"      LOC = "P143";
 #NET "sdram_cke"      LOC = "P144";
@@ -99,7 +99,6 @@ NET "io_b12"  LOC = "P141";#LCD_D7, SEG7
 #NET "sdram_dq[2]"    LOC = "P26" ;
 #NET "sdram_dq[1]"    LOC = "P24" ;
 #NET "sdram_dq[0]"    LOC = "P23" ;
-
 #NET "sdram_dq[*]"   TNM = SDRAM_PIN_GROUP;
 #NET "sdram_addr[*]" TNM = SDRAM_PIN_GROUP;
 #NET "sdram_ba[*]"   TNM = SDRAM_PIN_GROUP;
@@ -110,6 +109,7 @@ NET "io_b12"  LOC = "P141";#LCD_D7, SEG7
 #NET "sdram_cs_n"    TNM = SDRAM_PIN_GROUP;
 #NET "sdram_cke"     TNM = SDRAM_PIN_GROUP;
 #NET "sdram_clk"     TNM = SDRAM_PIN_GROUP;
-
 #NET "sdram_dq[*]" OFFSET = IN 4ns VALID 3ns BEFORE "clk50m";
 #TIMEGRP SDRAM_PIN_GROUP OFFSET = OUT AFTER "clk50m" REFERENCE_PIN "sdram_clk" RISING;
+
+

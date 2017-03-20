@@ -231,10 +231,9 @@ proc add_source_files {} {
 
    puts "$myScript: Adding sources to project..."
 
-   xfile add "../rtl_src/SEG_static.v"
+   xfile add "../rtl_src/clk_buf.v"
    xfile add "../rtl_src/cmuller.v"
    xfile add "../rtl_src/fpga_core.v"
-   xfile add "../rtl_src/segment_show.v"
    xfile add "../rtl_src/str.v"
    xfile add "fpga_core.ucf"
 
@@ -318,7 +317,7 @@ proc set_process_props {} {
    project set "Optimization Effort" "Normal" -process "Synthesize - XST"
    project set "Resource Sharing" "true" -process "Synthesize - XST"
    project set "Shift Register Extraction" "true" -process "Synthesize - XST"
-   project set "User Browsed Strategy Files" ""
+   project set "User Browsed Strategy Files" "/opt/xilinx_ise/14.7/ISE_DS/ISE/data/default.xds"
    project set "VHDL Source Analysis Standard" "VHDL-93"
    project set "Analysis Effort Level" "Standard" -process "Analyze Power Distribution (XPower Analyzer)"
    project set "Analysis Effort Level" "Standard" -process "Generate Text Power Report"
