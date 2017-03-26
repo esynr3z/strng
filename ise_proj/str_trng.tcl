@@ -231,10 +231,11 @@ proc add_source_files {} {
 
    puts "$myScript: Adding sources to project..."
 
-   xfile add "../rtl_src/clk_buf.v"
-   xfile add "../rtl_src/cmuller.v"
+   xfile add "../rtl_src/trng_cmuller.v"
    xfile add "../rtl_src/fpga_core.v"
-   xfile add "../rtl_src/str.v"
+   xfile add "../rtl_src/trng_str.v"
+   xfile add "../rtl_src/trng_core.v"
+   xfile add "../rtl_src/trng_defs.vh"
    xfile add "fpga_core.ucf"
 
    # Set the Top Module as well...

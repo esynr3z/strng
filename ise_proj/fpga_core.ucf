@@ -4,9 +4,9 @@ NET "clk50m" LOC = "P55" ;
 NET "rst_n"  LOC = "P124";#KEY1
 NET "clk50m" TNM_NET = "clk50m";
 TIMESPEC TS_clk50m = PERIOD "clk50m" 18 ns HIGH 50 % INPUT_JITTER 200 ps;
-NET "clk100k" TNM_NET = clk100k;
-TIMESPEC TS_clk100k = PERIOD "clk100k" TS_clk50m * 500 HIGH 50%;
-NET "clk50m" CLOCK_DEDICATED_ROUTE = FALSE;
+#NET "clk100k" TNM_NET = clk100k;
+#TIMESPEC TS_clk100k = PERIOD "clk100k" TS_clk50m * 500 HIGH 50%;
+#NET "clk50m" CLOCK_DEDICATED_ROUTE = FALSE;
 
 #IO_A
 NET "io_a1"   LOC = "P123";

@@ -25,7 +25,7 @@
 //             
 //==============================================================================
 
-module cmuller(
+module trng_cmuller(
     f,
     r,
     clr,
@@ -33,12 +33,22 @@ module cmuller(
     c
 );
 
+
+//------------------------------------------------------------------------------
+// Ports declaration
+//------------------------------------------------------------------------------
 input   f;      // forward input
 input   r;      // reverse input
 input   set;    // set input
 input   clr;    // clear input
 output  c;      // c-gate output
 
+
+//------------------------------------------------------------------------------
+//
+// Muller C-gate main logic
+//
+//------------------------------------------------------------------------------
 // This only used to in test purposes, i.e. generate LUT5 init value, 
 // otherwise - LUT hard macro should be used.
 /*

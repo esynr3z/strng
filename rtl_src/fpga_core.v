@@ -163,57 +163,43 @@ output  io_a10;      // IO port A pin (board: A10)
 // Reset generator
 reg [7:0] rst_n_r;
 reg       rst_n_buf;
-
+wire      sysrstn;
 // Clock
-wire clk;
-reg [8:0] clk100k_counter;
-wire clk100k_en;
-wire clk100k;
-
-genvar i;
+wire sysclk;
+reg [8:0] clkdiv_counter;
+wire clkdiv_en;
+// TRNG
+wire [7:0] rnddata;
 
 
 //------------------------------------------------------------------------------
 //
-// Clocks
+// Clocks and reset
 //
 //------------------------------------------------------------------------------
 assign clk = clk50m;
 
+// 100kHz pulse generator
 always @ (posedge clk)
 begin
-    if (clk100k_counter == 499)
-        clk100k_counter <= 0;
+    if (clkdiv_counter == 499)
+        clkdiv_counter <= 0;
     else
-        clk100k_counter <= clk100k_counter+1;
+        clkdiv_counter <= clkdiv_counter+1;
 end  
 
-assign clk100k_en = (clk100k_counter == 499) ? 1'b1 : 1'b0;
+assign clkdiv_en = (clkdiv_counter == 499) ? 1'b1 : 1'b0;
 
-clk_buf
-    clk100k_buf
-    (
-        .in     (clk),
-        .ce     (clk100k_en),
-        .out    (clk100k)
-    );
-
-assign io_a10 = clk;
-
-//------------------------------------------------------------------------------
-//
-// Reset generator
-//
-//------------------------------------------------------------------------------
 // Reset registering stage
-always @ (posedge clk100k)
+always @ (posedge clk)
 begin
-    rst_n_r <= {rst_n_r[6:0],rst_n};
+    if (clkdiv_en)
+        rst_n_r <= {rst_n_r[6:0],rst_n};
 end   
 
 // Reset pulse generator 
-// Minimal reset active pulse lengh = 8*T_clk100k
-always @ (posedge clk100k)
+// Minimal reset active pulse lengh = 8*T_clkdiv
+always @ (posedge clk)
 begin
     if(rst_n_r==8'hFF)
         rst_n_buf <= 1'b1;
@@ -221,106 +207,32 @@ begin
         rst_n_buf <= 1'b0;
 end
 
-assign io_a9 = rst_n_buf;
+assign sysrstn = rst_n_buf; 
+
+assign io_a10 = clk;
+assign io_a9 = sysrstn;
 
 //------------------------------------------------------------------------------
 //
-// STR
+// TRNG
 //
 //------------------------------------------------------------------------------
-// The number of stages that compose the STR. Each
-// stage can be initialized either to 0 or 1.
-parameter LEN = 8;
-// A stage contains a token if its output
-// Cn is not equal to the output Cn+1. Conversely, a stage
-// contains a bubble if its output Cn is equal to the output
-// Cn+1. For example, 01010000 - TTTTBBBB
-parameter INIT = 8'b01010000;
-
-wire [7:0] s_a;
-wire [7:0] s_b;
-
-str
-    #(
-        .LEN(LEN),
-        .INIT(INIT)
-    )
-    str_a
+trng_core 
+    trng
     (
-        .rst_n (rst_n_buf),
-        .s (s_a)
+        .clk    (clk),
+        .rstn   (sysrstn),
+        .rnddata(rnddata)
     );
 
-str
-    #(
-        .LEN(LEN),
-        .INIT(INIT)
-    )
-    str_b
-    (
-        .rst_n (rst_n_buf),
-        .s (s_b)
-    );
+assign io_a8 = rnddata[7];
+assign io_a7 = rnddata[6];
+assign io_a6 = rnddata[5];
+assign io_a5 = rnddata[4];
+assign io_a4 = rnddata[3];
+assign io_a3 = rnddata[2];
+assign io_a2 = rnddata[1];
+assign io_a1 = rnddata[0];
 
-reg  [LEN-1:0] s_sample0;
-reg  [LEN-1:0] s_sample1;
-reg  [LEN-1:0] s_sample2;
-reg  [LEN-1:0] s_sample3;
-wire [LEN-1:0] s_sample_xor;
-wire [LEN-1:0] trnd_byte;
-
-generate
-    for (i=0; i<LEN; i=i+1) 
-    begin : s_sample_gen
-        // Sample 0 stage
-        always @ (posedge s_b[i] or negedge rst_n_buf)
-        begin
-            if (~rst_n_buf)
-                s_sample0[i] <= 0;
-            else
-                s_sample0[i] <= s_a[i];
-        end
-
-        assign s_sample_xor[i] = s_sample0[i] ^ s_sample1[i];
-
-        // Sample 1 stage
-        always @ (posedge s_b[i] or negedge rst_n_buf)
-        begin
-            if (~rst_n_buf)
-                s_sample1[i] <= 0;
-            else
-                s_sample1[i] <= s_sample_xor[i];
-        end
-
-        // Sample 2 stage
-        always @ (posedge s_sample0[i] or negedge rst_n_buf)
-        begin
-            if (~rst_n_buf)
-                s_sample2[i] <= 0;
-            else
-                s_sample2[i] <= s_sample1[i];
-        end
-
-        // Sample 3 stage
-        always @ (posedge clk or negedge rst_n_buf)
-        begin
-            if (~rst_n_buf)
-                s_sample3[i] <= 0;
-            else
-                s_sample3[i] <= s_sample2[i];
-        end
-    end
-endgenerate
-
-assign trnd_byte = s_sample3;
-
-assign io_a8 = trnd_byte[7];
-assign io_a7 = trnd_byte[6];
-assign io_a6 = trnd_byte[5];
-assign io_a5 = trnd_byte[4];
-assign io_a4 = trnd_byte[3];
-assign io_a3 = trnd_byte[2];
-assign io_a2 = trnd_byte[1];
-assign io_a1 = trnd_byte[0];
 
 endmodule //fpga_core
