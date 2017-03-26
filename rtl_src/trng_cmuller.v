@@ -24,6 +24,7 @@
 // | x | x | 1 | 1 | 1    |
 //             
 //==============================================================================
+`include "trng_defs.vh"
 
 module trng_cmuller(
     f,
@@ -49,27 +50,25 @@ output  c;      // c-gate output
 // Muller C-gate main logic
 //
 //------------------------------------------------------------------------------
-// This only used to in test purposes, i.e. generate LUT5 init value, 
-// otherwise - LUT hard macro should be used.
-/*
-wire r_n = ~r;
-wire clr_n = ~clr;
-assign c = clr_n&(f&c | r_n&c | f&r_n)|set;
-*/
-
-//TODO: If several families will be used - wrap this and simmilar code to prepocessor defines
-LUT5 //LUT5 from Xilinx Spartan6 family
-    #(
-        //O = ((!I0 * I2 * !I3) + (!I0 * I1 * I2) + I4 + (!I0 * I1 * !I3));
-        .INIT(32'hFFFF4054)
-    )
-    LUT5_u (
-        .O  (c),    // LUT general output
-        .I0 (clr),  // LUT input 0
-        .I1 (f),    // LUT input 1
-        .I2 (c),    // LUT input 2
-        .I3 (r),    // LUT input 3
-        .I4 (set)   // LUT input 4
-    );
+`ifdef XILINX_SPARTAN6
+    LUT5 //LUT5 from Xilinx Spartan6 family
+        #(
+            //O = ((!I0 * I2 * !I3) + (!I0 * I1 * I2) + I4 + (!I0 * I1 * !I3));
+            .INIT(32'hFFFF4054)
+        )
+        LUT5_u (
+            .O  (c),    // LUT general output
+            .I0 (clr),  // LUT input 0
+            .I1 (f),    // LUT input 1
+            .I2 (c),    // LUT input 2
+            .I3 (r),    // LUT input 3
+            .I4 (set)   // LUT input 4
+        );
+`else // GENERIC
+    // This should be used only in test purposes.
+    // It's recomended to hardcode this equation with your FPGA, to avoid 
+    // possible problems with STR synthesis. 
+    assign c = (~clr)&(f&c | (~r)&c | f&(~r))|set;
+`endif
 
 endmodule // cmuller

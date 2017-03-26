@@ -3,6 +3,8 @@
 // True random number generator on self-timed rings (STR) defines
 // 
 //==============================================================================
+// FPGA family
+`define XILINX_SPARTAN6
 
 // The number of stages that compose the STR. Each
 // stage can be initialized either to 0 or 1.
