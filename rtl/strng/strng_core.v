@@ -1,46 +1,63 @@
 //==============================================================================
 //
-// True random number generator on self-timed rings (STR) core
+// Self-timed rings (STR) based true random number generator core
 // 
 //==============================================================================
-`include "trng_defs.vh"
 
-module trng_core (
+module strng_core (
     clk,
     rstn,
-    rnddata
+    rnd_data
 );
+
+
+//------------------------------------------------------------------------------
+// Parameters
+//------------------------------------------------------------------------------
+// The number of stages that compose the STR. Each
+// stage can be initialized either to 0 or 1.
+parameter STR_LEN = 8;
+
+// A stage contains a token if its output
+// Cn is not equal to the output Cn+1. Conversely, a stage
+// contains a bubble if its output Cn is equal to the output
+// Cn+1. For example, 01010000 - TTTTBBBB
+parameter STR_INIT = 8'b01010000;
 
 
 //------------------------------------------------------------------------------
 // Ports declaration
 //------------------------------------------------------------------------------
-input   clk;                    // Sample clock
-input   rstn;                   // Active low reset
-output  [`STR_LEN-1:0] rnddata; // Random data bus
+// Clock and reset
+input  clk;      // Sample clock
+input  rstn;     // Active low reset
+// Functional
+output [STR_LEN-1:0] rnd_data; // Random data bus
 
 
 //------------------------------------------------------------------------------
 // Local signal declarations
 //------------------------------------------------------------------------------
 //STR outputs
-wire [`STR_LEN-1:0] stra_sout;
-wire [`STR_LEN-1:0] strb_sout;
+wire [STR_LEN-1:0] stra_sout;
+wire [STR_LEN-1:0] strb_sout;
 //Sample submodule
-reg  [`STR_LEN-1:0] sout_sample0;
-reg  [`STR_LEN-1:0] sout_sample1;
-reg  [`STR_LEN-1:0] sout_sample2;
-reg  [`STR_LEN-1:0] sout_sample3;
-wire [`STR_LEN-1:0] sout_sample_xor;
+reg  [STR_LEN-1:0] sout_sample0;
+reg  [STR_LEN-1:0] sout_sample1;
+reg  [STR_LEN-1:0] sout_sample2;
+reg  [STR_LEN-1:0] sout_sample3;
+wire [STR_LEN-1:0] sout_sample_xor;
 
 
 //------------------------------------------------------------------------------
+//
 // STR
+//
 //------------------------------------------------------------------------------
-trng_str
+strng_str
     #(
-        .LEN    (`STR_LEN),
-        .INIT   (`STR_INIT)
+        .LEN    (STR_LEN),
+        .INIT   (STR_INIT)
     )
     stra
     (
@@ -48,10 +65,10 @@ trng_str
         .sout   (stra_sout)
     );
 
-trng_str
+strng_str
     #(
-        .LEN    (`STR_LEN),
-        .INIT   (`STR_INIT)
+        .LEN    (STR_LEN),
+        .INIT   (STR_INIT)
     )
     strb
     (
@@ -59,12 +76,15 @@ trng_str
         .sout   (strb_sout)
     );
 
+
 //------------------------------------------------------------------------------
+//
 // Sample submodule
+//
 //------------------------------------------------------------------------------
 generate
 genvar i;
-    for (i=0; i<`STR_LEN; i=i+1) 
+    for (i=0; i<STR_LEN; i=i+1) 
     begin : sout_sample
         // Sample stage 0
         always @(posedge strb_sout[i] or negedge rstn)
@@ -111,7 +131,7 @@ endgenerate
 //------------------------------------------------------------------------------
 // Outputs
 //------------------------------------------------------------------------------
-assign rnddata = sout_sample3;
+assign rnd_data = sout_sample3;
 
 
-endmodule // trng_core
+endmodule // strng_core

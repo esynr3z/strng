@@ -7,7 +7,7 @@
 //
 //==============================================================================
 
-module trng_str(
+module strng_str(
     rstn,
     sout
 );
@@ -44,7 +44,7 @@ wire [LEN-1:0] c;
 generate
     for (i=0; i<LEN; i=i+1) 
     begin : stage_inst
-        trng_cmuller
+        strng_cmuller
             cmuller 
             (
                 .f  (f[i]),
@@ -84,4 +84,4 @@ endgenerate
 assign sout = c;
 
 
-endmodule // trng_str
+endmodule // strng_str

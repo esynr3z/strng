@@ -24,9 +24,8 @@
 // | x | x | 1 | 1 | 1    |
 //             
 //==============================================================================
-`include "trng_defs.vh"
 
-module trng_cmuller(
+module strng_cmuller(
     f,
     r,
     clr,
@@ -71,4 +70,4 @@ output  c;      // c-gate output
     assign c = (~clr)&(f&c | (~r)&c | f&(~r))|set;
 `endif
 
-endmodule // cmuller
+endmodule // strng_cmuller

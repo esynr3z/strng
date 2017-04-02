@@ -6,7 +6,6 @@
 // 
 //==============================================================================
 
-
 module fpga_core (
 //    clk24m,
     clk50m,
@@ -76,11 +75,11 @@ module fpga_core (
 //------------------------------------------------------------------------------
 // Parameters
 //------------------------------------------------------------------------------
-    parameter        SDRAM_COL_WIDTH  = 9;          //2^9 = 512 addresses in each colum
-    parameter        SDRAM_ROW_WIDTH  = 13;         //2^13 = 8192 addresses in each bank
-    parameter        SDRAM_BANK_WIDTH = 2;          //2^2 = 4 banks in a single chip
-    parameter        SDRAM_DQ_WIDTH   = 16;         //16 bit Data Bus for one chip
-    parameter [12:0] SDRAM_SDRAM_MR   = 13'h0037;   //Full Page Burst,Latency=3,Burst Read and Burst Write,Standard mode
+//parameter        SDRAM_COL_WIDTH  = 9;          //2^9 = 512 addresses in each colum
+//parameter        SDRAM_ROW_WIDTH  = 13;         //2^13 = 8192 addresses in each bank
+//parameter        SDRAM_BANK_WIDTH = 2;          //2^2 = 4 banks in a single chip
+//parameter        SDRAM_DQ_WIDTH   = 16;         //16 bit Data Bus for one chip
+//parameter [12:0] SDRAM_SDRAM_MR   = 13'h0037;   //Full Page Burst,Latency=3,Burst Read and Burst Write,Standard mode
 
 
 //------------------------------------------------------------------------------
@@ -169,7 +168,7 @@ wire sysclk;
 reg [8:0] clkdiv_counter;
 wire clkdiv_en;
 // TRNG
-wire [7:0] rnddata;
+wire [7:0] rnd_data;
 
 
 //------------------------------------------------------------------------------
@@ -214,25 +213,25 @@ assign io_a9 = sysrstn;
 
 //------------------------------------------------------------------------------
 //
-// TRNG
+// STR true random number generator
 //
 //------------------------------------------------------------------------------
-trng_core 
-    trng
+strng_core 
+    strng
     (
         .clk    (clk),
         .rstn   (sysrstn),
-        .rnddata(rnddata)
+        .rnd_data(rnd_data)
     );
 
-assign io_a8 = rnddata[7];
-assign io_a7 = rnddata[6];
-assign io_a6 = rnddata[5];
-assign io_a5 = rnddata[4];
-assign io_a4 = rnddata[3];
-assign io_a3 = rnddata[2];
-assign io_a2 = rnddata[1];
-assign io_a1 = rnddata[0];
+assign io_a8 = rnd_data[7];
+assign io_a7 = rnd_data[6];
+assign io_a6 = rnd_data[5];
+assign io_a5 = rnd_data[4];
+assign io_a4 = rnd_data[3];
+assign io_a3 = rnd_data[2];
+assign io_a2 = rnd_data[1];
+assign io_a1 = rnd_data[0];
 
 
-endmodule //fpga_core
+endmodule // fpga_core

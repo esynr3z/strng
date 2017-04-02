@@ -3,7 +3,8 @@
 # Script to programm FPGA or external ROM with Xilinx ISE .bit file created
 # Just type: "bash prog -h" to see how to use it
 
-PROJ_PATH=`pwd`
+PROJ_PATH="../work"
+#PROJ_PATH=`pwd`
 #PROJ_NAME=`basename "$PROJ_PATH"`
 #TOP_NAME=$PROJ_NAME
 TOP_NAME="fpga_core"

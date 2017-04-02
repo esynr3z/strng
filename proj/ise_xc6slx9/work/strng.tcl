@@ -1,11 +1,11 @@
 # 
-# Project automation script for str_trng 
+# Project automation script for strng 
 # 
 # Created for ISE version 14.7
 # 
 # This file contains several Tcl procedures (procs) that you can use to automate
 # your project by running from xtclsh or the Project Navigator Tcl console.
-# If you load this file (using the Tcl command: source str_trng.tcl), then you can
+# If you load this file (using the Tcl command: source strng.tcl), then you can
 # run any of the procs included here.
 # 
 # This script is generated assuming your project has HDL sources.
@@ -35,8 +35,8 @@
 #        when this script was generated.
 # 
 
-set myProject "str_trng"
-set myScript "str_trng.tcl"
+set myProject "strng"
+set myScript "strng.tcl"
 
 # 
 # Main (top-level) routines
@@ -231,12 +231,11 @@ proc add_source_files {} {
 
    puts "$myScript: Adding sources to project..."
 
-   xfile add "../rtl_src/trng_cmuller.v"
-   xfile add "../rtl_src/fpga_core.v"
-   xfile add "../rtl_src/trng_str.v"
-   xfile add "../rtl_src/trng_core.v"
-   xfile add "../rtl_src/trng_defs.vh"
-   xfile add "fpga_core.ucf"
+   xfile add "../../../rtl/strng/strng_cmuller.v"
+   xfile add "../../../rtl/strng/strng_str.v"
+   xfile add "../../../rtl/strng/strng_core.v"
+   xfile add "../src/fpga_core.ucf"
+   xfile add "../src/fpga_core.v"
 
    # Set the Top Module as well...
    project set top "fpga_core"
@@ -340,7 +339,7 @@ proc set_process_props {} {
    project set "Disable Detailed Package Model Insertion" "false" -process "Generate IBIS Model"
    project set "Launch SDK after Export" "true" -process "Export Hardware Design To SDK with Bitstream"
    project set "Launch SDK after Export" "true" -process "Export Hardware Design To SDK without Bitstream"
-   project set "Target UCF File Name" "fpga_core.ucf" -process "Back-annotate Pin Locations"
+   project set "Target UCF File Name" "../src/fpga_core.ucf" -process "Back-annotate Pin Locations"
    project set "Ignore User Timing Constraints" "false" -process "Map"
    project set "Register Ordering" "4" -process "Map"
    project set "Use RLOC Constraints" "Yes" -process "Map"
@@ -446,7 +445,7 @@ proc set_process_props {} {
    project set "Use Synchronous Set" "Auto" -process "Synthesize - XST"
    project set "Use Synthesis Constraints File" "true" -process "Synthesize - XST"
    project set "Verilog Include Directories" "" -process "Synthesize - XST"
-   project set "Verilog Macros" "" -process "Synthesize - XST"
+   project set "Verilog Macros" "XILINX_SPARTAN6" -process "Synthesize - XST"
    project set "Work Directory" "xst" -process "Synthesize - XST"
    project set "Write Timing Constraints" "false" -process "Synthesize - XST"
    project set "Other XST Command Line Options" "" -process "Synthesize - XST"
