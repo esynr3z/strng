@@ -71,6 +71,17 @@ module fpga_core (
 //    sdram_dq
 );
 
+//------------------------------------------------------------------------------
+// Defines
+//------------------------------------------------------------------------------
+// Divider compare values for several clocks
+`define SAMPLE_CLK_50MHZ_DIV_VAL 0
+`define SAMPLE_CLK_25MHZ_DIV_VAL 1
+`define SAMPLE_CLK_10MHZ_DIV_VAL 4
+`define SAMPLE_CLK_5MHZ_DIV_VAL  9
+`define SAMPLE_CLK_1MHZ_DIV_VAL  49
+// Choosen clock
+`define SAMPLE_CLK_DIV_VAL  `SAMPLE_CLK_1MHZ_DIV_VAL
 
 //------------------------------------------------------------------------------
 // Parameters
@@ -160,13 +171,17 @@ output  io_a10;      // IO port A pin (board: A10)
 // Local signal declarations
 //------------------------------------------------------------------------------
 // Reset generator
+reg [8:0] rst_clkdiv_counter;
+wire      rst_clkdiv_en;
 reg [7:0] rst_n_r;
 reg       rst_n_buf;
 wire      sysrstn;
 // Clock
-wire sysclk;
-reg [8:0] clkdiv_counter;
-wire clkdiv_en;
+reg [7:0] sample_clk_div_counter;
+wire      sample_clk_en;
+wire      sample_clk;
+wire      sysclk;
+
 // TRNG
 wire [7:0] rnd_data;
 
@@ -176,39 +191,49 @@ wire [7:0] rnd_data;
 // Clocks and reset
 //
 //------------------------------------------------------------------------------
-assign clk = clk50m;
+assign sysclk = clk50m;
 
 // 100kHz pulse generator
-always @ (posedge clk)
+always @ (posedge sysclk)
 begin
-    if (clkdiv_counter == 499)
-        clkdiv_counter <= 0;
+    if (rst_clkdiv_counter == 499)
+        rst_clkdiv_counter <= 0;
     else
-        clkdiv_counter <= clkdiv_counter+1;
+        rst_clkdiv_counter <= rst_clkdiv_counter+1;
 end  
 
-assign clkdiv_en = (clkdiv_counter == 499) ? 1'b1 : 1'b0;
+assign rst_clkdiv_en = (rst_clkdiv_counter == 499) ? 1'b1 : 1'b0;
 
 // Reset registering stage
-always @ (posedge clk)
+always @ (posedge sysclk)
 begin
-    if (clkdiv_en)
+    if (rst_clkdiv_en)
         rst_n_r <= {rst_n_r[6:0],rst_n};
 end   
 
 // Reset pulse generator 
 // Minimal reset active pulse lengh = 8*T_clkdiv
-always @ (posedge clk)
+always @ (posedge sysclk)
 begin
     if(rst_n_r==8'hFF)
         rst_n_buf <= 1'b1;
     else
         rst_n_buf <= 1'b0;
 end
-
 assign sysrstn = rst_n_buf; 
 
-assign io_a10 = clk;
+// System clock divider
+always @ (posedge sysclk)
+begin
+    if (sample_clk_div_counter == `SAMPLE_CLK_DIV_VAL)
+        sample_clk_div_counter <= 0;
+    else
+        sample_clk_div_counter <= sample_clk_div_counter+1;
+end  
+
+assign sample_clk = (sample_clk_div_counter == `SAMPLE_CLK_DIV_VAL) ? clk50m : 1'b0;
+
+assign io_a10 = sample_clk;
 assign io_a9 = sysrstn;
 
 //------------------------------------------------------------------------------
@@ -219,9 +244,9 @@ assign io_a9 = sysrstn;
 strng_core 
     strng
     (
-        .clk    (clk),
-        .rstn   (sysrstn),
-        .rnd_data(rnd_data)
+        .clk        (sample_clk),
+        .rstn       (sysrstn),
+        .rnd_data   (rnd_data)
     );
 
 assign io_a8 = rnd_data[7];
