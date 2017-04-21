@@ -20,8 +20,8 @@ module fpga_core (
     io_a8,
     io_a9,
     io_a10,
-//    io_a11,
-//    io_a12,
+    io_a11,
+    io_a12,
 //    io_a13,
 //    io_a14,
 //    io_a15,
@@ -112,8 +112,8 @@ output  io_a7;       // IO port A pin (board: A7)
 output  io_a8;       // IO port A pin (board: A8)
 output  io_a9;       // IO port A pin (board: A9)
 output  io_a10;      // IO port A pin (board: A10)
-//input  io_a11;      // IO port A pin (board: A11)
-//input  io_a12;      // IO port A pin (board: A12)
+output  io_a11;      // IO port A pin (board: A11)
+output  io_a12;      // IO port A pin (board: A12)
 //input  io_a13;      // IO port A pin (board: A13)
 //input  io_a14;      // IO port A pin (board: A14)
 //input  io_a15;      // IO port A pin (board: A15)
@@ -246,8 +246,12 @@ strng_core
     (
         .clk        (sample_clk),
         .rstn       (sysrstn),
-        .rnd_data   (rnd_data)
+        .rnd_data   (rnd_data),
+        .sample0_clk (sample0_clk),
+        .strb_clk (strb_clk)
     );
+assign io_a12 = sample0_clk;
+assign io_a11 = strb_clk;
 
 assign io_a8 = rnd_data[7];
 assign io_a7 = rnd_data[6];

@@ -7,7 +7,9 @@
 module strng_core (
     clk,
     rstn,
-    rnd_data
+    rnd_data,
+    sample0_clk,
+    strb_clk,
 );
 
 
@@ -33,6 +35,8 @@ input  clk;      // Sample clock
 input  rstn;     // Active low reset
 // Functional
 output [STR_LEN-1:0] rnd_data; // Random data bus
+output sample0_clk;
+output strb_clk;
 
 
 //------------------------------------------------------------------------------
@@ -132,6 +136,7 @@ endgenerate
 // Outputs
 //------------------------------------------------------------------------------
 assign rnd_data = sout_sample3;
-
+assign sample0_clk = sout_sample0[7];
+assign strb_clk = strb_sout[7];
 
 endmodule // strng_core
