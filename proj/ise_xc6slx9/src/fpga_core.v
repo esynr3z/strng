@@ -82,7 +82,7 @@ module fpga_core (
 `define SAMPLE_CLK_2MHZ_DIV_VAL  24
 `define SAMPLE_CLK_1MHZ_DIV_VAL  49
 // Choosen clock
-`define SAMPLE_CLK_DIV_VAL  `SAMPLE_CLK_2MHZ_DIV_VAL
+`define SAMPLE_CLK_DIV_VAL  `SAMPLE_CLK_1MHZ_DIV_VAL
 
 //------------------------------------------------------------------------------
 // Parameters
@@ -233,8 +233,9 @@ begin
 end  
 
 assign sample_clk = (sample_clk_div_counter == `SAMPLE_CLK_DIV_VAL) ? clk50m : 1'b0;
+assign clkout     = (sample_clk_div_counter == ((`SAMPLE_CLK_DIV_VAL+1)/2 - 1)) ? clk50m : 1'b0;
 
-assign io_a10 = sample_clk;
+assign io_a10 = clkout;
 assign io_a9 = sysrstn;
 
 //------------------------------------------------------------------------------
