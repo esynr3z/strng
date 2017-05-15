@@ -46,6 +46,7 @@ reg  [STR_LEN-1:0] sout_sample0;
 reg  [STR_LEN-1:0] sout_sample1;
 reg  [STR_LEN-1:0] sout_sample2;
 reg  [STR_LEN-1:0] sout_sample3;
+reg  [STR_LEN-1:0] sout_sample4;
 wire [STR_LEN-1:0] sout_sample_xor;
 
 
@@ -124,6 +125,15 @@ genvar i;
             else
                 sout_sample3[i] <= sout_sample2[i];
         end
+
+        // Sample 4 stage
+        always @(posedge clk or negedge rstn)
+        begin
+            if (~rstn)
+                sout_sample4[i] <= 0;
+            else
+                sout_sample4[i] <= sout_sample3[i];
+        end
     end
 endgenerate
 
@@ -131,7 +141,7 @@ endgenerate
 //------------------------------------------------------------------------------
 // Outputs
 //------------------------------------------------------------------------------
-assign rnd_data = sout_sample3;
+assign rnd_data = sout_sample4;
 
 
 endmodule // strng_core
