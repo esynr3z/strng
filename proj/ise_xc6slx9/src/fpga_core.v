@@ -20,10 +20,10 @@ module fpga_core (
     io_a8,
     io_a9,
     io_a10,
-//    io_a11,
-//    io_a12,
-//    io_a13,
-//    io_a14,
+    io_a11,
+    io_a12,
+    io_a13,
+    io_a14,
 //    io_a15,
 //    io_a16,
 //    io_a17,
@@ -113,10 +113,10 @@ output  io_a7;       // IO port A pin (board: A7)
 output  io_a8;       // IO port A pin (board: A8)
 output  io_a9;       // IO port A pin (board: A9)
 output  io_a10;      // IO port A pin (board: A10)
-//input  io_a11;      // IO port A pin (board: A11)
-//input  io_a12;      // IO port A pin (board: A12)
-//input  io_a13;      // IO port A pin (board: A13)
-//input  io_a14;      // IO port A pin (board: A14)
+output  io_a11;      // IO port A pin (board: A11)
+output  io_a12;      // IO port A pin (board: A12)
+output  io_a13;      // IO port A pin (board: A13)
+output  io_a14;      // IO port A pin (board: A14)
 //input  io_a15;      // IO port A pin (board: A15)
 //input  io_a16;      // IO port A pin (board: A16)
 //input  io_a17;      // IO port A pin (board: A17)
@@ -259,6 +259,12 @@ assign io_a4 = rnd_data[3];
 assign io_a3 = rnd_data[2];
 assign io_a2 = rnd_data[1];
 assign io_a1 = rnd_data[0];
+
+
+assign io_a14 = rnd_data[5] ^ rnd_data[7];
+assign io_a13 = rnd_data[4] ^ rnd_data[6];
+assign io_a12 = rnd_data[1] ^ rnd_data[3];
+assign io_a11 = rnd_data[0] ^ rnd_data[2];
 
 
 endmodule // fpga_core
