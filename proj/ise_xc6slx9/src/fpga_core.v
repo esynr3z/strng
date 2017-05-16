@@ -81,8 +81,9 @@ module fpga_core (
 `define SAMPLE_CLK_5MHZ_DIV_VAL  9
 `define SAMPLE_CLK_2MHZ_DIV_VAL  24
 `define SAMPLE_CLK_1MHZ_DIV_VAL  49
+`define SAMPLE_CLK_05MHZ_DIV_VAL 99
 // Choosen clock
-`define SAMPLE_CLK_DIV_VAL  `SAMPLE_CLK_1MHZ_DIV_VAL
+`define SAMPLE_CLK_DIV_VAL  `SAMPLE_CLK_05MHZ_DIV_VAL
 
 //------------------------------------------------------------------------------
 // Parameters
